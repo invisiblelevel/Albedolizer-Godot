@@ -1,6 +1,6 @@
 # Albedolizer PBR Generator for Godot
 
-Generate production-ready PBR maps from Albedo textures — right inside Godot Editor.
+Generate PBR maps from Albedo textures — right inside Godot Editor.
 
 **Free & open-source (MIT).**
 
@@ -10,18 +10,26 @@ Generate production-ready PBR maps from Albedo textures — right inside Godot E
 
 ### What it does
 
-- **7 PBR maps** from a single Albedo texture: Height, Normal, AO, Roughness, Metallic, Edge, ORM
+The add-on bundles a headless **Albedolizer CLI** — the same engine used in the desktop app. Right from Godot Editor you get:
+
+- **PBR map generation** from a single Albedo texture: Normal, Metallic/Smoothness/AO packed, plus optional Height and Roughness PNGs
 - **AI color correction** — Autolevels or LUTwithBGrid
 - **Math fallback** — CLAHE + soft-clip (no AI required)
 - **50 material presets** with auto-detect from filename
-- **Auto-created StandardMaterial3D** with proper channels (R=Metallic, G=AO, A=Smoothness)
-- **Engine packing** — Unity URP / HDRP, Unreal, Godot ORM
-- **Progress bar** — Godot stays responsive
-- **Works offline** — CLI is bundled inside the add-on
+- **Auto-created StandardMaterial3D** with proper channels:
+  - Albedo → `albedo_texture`
+  - Normal → `normal_texture`
+  - Metallic → Red channel of packed map
+  - Roughness → Alpha channel of packed map
+  - AO → Green channel of packed map
+- **Progress bar** — Godot stays responsive during generation
+- **Works offline** — no external services
+
+Everything runs locally. The CLI is bundled inside the add-on and is auto-copied to `user://albedolizer/cli/` when the plugin is enabled.
 
 ### Installation
 
-1. Copy `addons/albedolizer/` folder into your Godot project
+1. Copy `addons/albedolizer/` folder into your Godot project root
 2. Open **Project → Project Settings → Plugins**
 3. Find **Albedolizer** and check **Enable**
 4. Done — CLI is bundled, path is auto-set
@@ -34,7 +42,7 @@ Generate production-ready PBR maps from Albedo textures — right inside Godot E
 
 1. Open the **Albedolizer** dock in the right panel
 2. Pick your **Albedo texture**
-3. Choose preset, correction mode, maps
+3. Choose preset, correction mode
 4. Select a **MeshInstance3D** in the scene
 5. Click **🎨 Generate PBR**
 
@@ -46,7 +54,7 @@ After first generation, set import settings for correct display:
 
 - `_normal.png` → Import tab → **Lossless** in **Compress to** → **Normal Map** checkbox **On** → Reimport
 - `_MetallicSmoothness.png` → Import tab → **sRGB** → **Off** → Reimport
-- `_albedo.png` → leave as default (sRGB On)
+- `_albedo.*` → leave as default (sRGB On)
 
 Godot remembers these settings in `.import` files — you do this **once**.
 
@@ -70,18 +78,26 @@ Bundled CLI binaries: proprietary.
 
 ### Что делает
 
-- **7 PBR-карт** из одной Albedo-текстуры: Height, Normal, AO, Roughness, Metallic, Edge, ORM
-- **AI-коррекция цвета** — Autolevels или LUTwithBGrid
+Аддон включает в себя headless **Albedolizer CLI** — тот же движок, что и в десктопном приложении. Прямо из редактора Godot вы получаете:
+
+- **Генерацию PBR-карт** из одной Albedo-текстуры: Normal, Metallic/Smoothness/AO (упакованные), плюс опционально Height и Roughness PNG
+- **AI-коррекцию цвета** — Autolevels или LUTwithBGrid
 - **Математический fallback** — CLAHE + soft-clip
 - **50 пресетов материалов** с автоопределением из имени файла
-- **Автосоздание StandardMaterial3D** с правильными каналами (R=Metallic, G=AO, A=Smoothness)
-- **Упаковка под движки** — Unity URP / HDRP, Unreal, Godot ORM
-- **Прогресс-бар** — Godot не виснет
-- **Работает офлайн** — CLI встроен в аддон
+- **Автосоздание StandardMaterial3D** с правильными каналами:
+  - Albedo → `albedo_texture`
+  - Normal → `normal_texture`
+  - Metallic → красный канал упакованной карты
+  - Roughness → альфа-канал упакованной карты
+  - AO → зелёный канал упакованной карты
+- **Прогресс-бар** — Godot не виснет во время генерации
+- **Работает офлайн** — никаких внешних сервисов
+
+Всё работает локально. CLI идёт в комплекте и автоматически копируется в `user://albedolizer/cli/` при включении плагина.
 
 ### Установка
 
-1. Скопируй папку `addons/albedolizer/` в свой Godot-проект
+1. Скопируй папку `addons/albedolizer/` в корень своего Godot-проекта
 2. Открой **Проект → Настройки проекта → Плагины**
 3. Найди **Albedolizer** и поставь галочку **Включить**
 4. Готово — CLI уже внутри, путь прописан автоматически
@@ -94,7 +110,7 @@ Bundled CLI binaries: proprietary.
 
 1. Открой док **Albedolizer** в правой панели
 2. Выбери **Albedo-текстуру**
-3. Пресет, режим коррекции, карты
+3. Пресет, режим коррекции
 4. Выдели **MeshInstance3D** в сцене
 5. Жми **🎨 Generate PBR**
 
@@ -106,11 +122,13 @@ Bundled CLI binaries: proprietary.
 
 - `_normal.png` → вкладка **Импорт** → **Lossless** в **Сжать до** → галочка **Normal Map** **Вкл** → Reimport
 - `_MetallicSmoothness.png` → вкладка **Импорт** → **sRGB** → **Off** → Reimport
-- `_albedo.png` → оставь по умолчанию (sRGB On)
+- `_albedo.*` → оставь по умолчанию (sRGB On)
 
 Godot запоминает эти настройки в `.import` файлах — делаешь **один раз**.
 
 ### Про Albedolizer
+
+Этот аддон — мост в Godot для **Albedolizer** — бесплатной десктопной утилиты для 3D-художников:
 
 - 🌐 **GitHub**: [github.com/invisiblelevel/Albedolizer](https://github.com/invisiblelevel/Albedolizer)
 - 🎮 **itch.io**: [invlvl.itch.io/albedolizer](https://invlvl.itch.io/albedolizer)
