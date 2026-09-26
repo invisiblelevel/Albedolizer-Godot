@@ -11,6 +11,8 @@ func _enter_tree() -> void:
 	var dock_script: GDScript = load("res://addons/albedolizer/albedolizer_dock.gd")
 	dock = dock_script.new()
 	dock.name = "Albedolizer"
+	if ResourceLoader.exists("res://addons/albedolizer/icon.svg"):
+		dock.set_meta("_tab_icon", load("res://addons/albedolizer/icon.svg"))
 	add_control_to_dock(DOCK_SLOT_RIGHT_UL, dock)
 
 func _exit_tree() -> void:
