@@ -324,8 +324,9 @@ func _poll_thread() -> void:
 		var assets_dir: String = project_dir.path_join("albedolizer_output/" + _current_base_name)
 		DirAccess.make_dir_recursive_absolute(assets_dir)
 
-		# ═══ Сначала копируем ИСХОДНЫЙ albedo (его CLI не сохраняет) ═══
-		var albedo_dst: String = assets_dir.path_join(_current_base_name + "_albedo.png")
+		# ═══ Сначала копируем ИСХОДНЫЙ albedo с оригинальным расширением ═══
+		var ext: String = albedo_path.get_extension().to_lower()
+		var albedo_dst: String = assets_dir.path_join(_current_base_name + "_albedo." + ext)
 		if FileAccess.file_exists(albedo_path):
 			DirAccess.copy_absolute(albedo_path, albedo_dst)
 
@@ -357,7 +358,13 @@ func _set_status(text: String, color: String) -> void:
 	status_label.add_theme_color_override("font_color", Color(color))
 
 func _build_material(base_name: String, res_dir: String) -> void:
-	var albedo_file: String = res_dir.path_join(base_name + "_albedo.png")
+	# ═══ Ищем albedo с любым расширением ═══
+	var albedo_file: String = ""
+	for ext: String in ["png", "jpg", "jpeg", "tif", "tiff", "bmp"]:
+		var candidate: String = res_dir.path_join(base_name + "_albedo." + ext)
+		if ResourceLoader.exists(candidate):
+			albedo_file = candidate
+			break
 	var normal_file: String = res_dir.path_join(base_name + "_normal.png")
 	var packed_file: String = res_dir.path_join(base_name + "_unity_urp_gl_MetallicSmoothness.png")
 
